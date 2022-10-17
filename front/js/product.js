@@ -60,11 +60,18 @@ buttonAddCart.addEventListener("click", () => {
       localStorage.setItem("panier", JSON.stringify(storageParsed));
     } else {
       // Si produit déja dans le local storage
-      // Modification de la quantité du produit
-      elementTrouve.quantity++;
-      console.log("ICI IL FAUT MODIFIER LA QUANTITE");
-      // Ici il faut mettre à jour le local storage avec le produit à jour
-      localStorage.setItem("panier", JSON.stringify(storageParsed));
+      // On vérifie si la couleur est la même
+      if ((elementTrouve.colors = colors)) {
+        // Modification de la quantité du produit
+        elementTrouve.quantity++;
+        console.log("ICI IL FAUT MODIFIER LA QUANTITE");
+        localStorage.setItem("panier", JSON.stringify(storageParsed));
+      } else {
+        localStorage.setItem(
+          "panier",
+          JSON.stringify([{ id: produitRecupere._id, quantity: 1 }])
+        );
+      }
     }
   }
   // Si existe pas on le créer
@@ -77,6 +84,6 @@ buttonAddCart.addEventListener("click", () => {
   }
 });
 
-buttonAddCart.addEventListener("click", () => {
-  window.location.href = "./cart.html";
-});
+//buttonAddCart.addEventListener("click", () => {
+//window.location.href = "./cart.html";
+//});
