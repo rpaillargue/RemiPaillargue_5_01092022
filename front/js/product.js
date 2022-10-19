@@ -61,16 +61,18 @@ buttonAddCart.addEventListener("click", () => {
     } else {
       // Si produit déja dans le local storage
       // On vérifie si la couleur est la même
-      if ((elementTrouve.colors = colors)) {
+      if (elementTrouve.color === colors) {
         // Modification de la quantité du produit
         elementTrouve.quantity++;
         console.log("ICI IL FAUT MODIFIER LA QUANTITE");
         localStorage.setItem("panier", JSON.stringify(storageParsed));
       } else {
-        localStorage.setItem(
-          "panier",
-          JSON.stringify([{ id: produitRecupere._id, quantity: 1 }])
-        );
+        storageParsed.push({
+          id: produitRecupere._id,
+          quantity: 1,
+          color: colors.value,
+        });
+        localStorage.setItem("panier", JSON.stringify(storageParsed));
       }
     }
   }
@@ -78,7 +80,9 @@ buttonAddCart.addEventListener("click", () => {
   else {
     localStorage.setItem(
       "panier",
-      JSON.stringify([{ id: produitRecupere._id, quantity: 1 }])
+      JSON.stringify([
+        { id: produitRecupere._id, quantity: 1, color: colors.value },
+      ])
     );
     //console.log(`panier not found`);
   }
