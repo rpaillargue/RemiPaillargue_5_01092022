@@ -1,29 +1,30 @@
 let productFromLocalStorage = JSON.parse(localStorage.getItem("panier"));
 
-fetch("http://localhost:3000/api/products")
-  .then(function (res) {
-    return res.json();
-  })
-  .then(function (product) {
-    for (let product of productFromLocalStorage) {
-      // Création et insertion de l'élement article
-      const cartArticle = document.createElement("article");
-      document.querySelector("#cart__items").appendChild(cartArticle);
-      cartArticle.className = "cart__item";
-      cartArticle.setAttribute("data-id", productFromLocalStorage._id);
-      console.log(cartArticle);
+if (!productFromLocalStorage) {
+  const titleCart = document.querySelector("h1");
+  const sectionCart = document.querySelector(".cart");
 
-      // Insertion de l'élément "div" pour l'image produit
-      let productDivImg = document.createElement("div");
-      cartArticle.appendChild(productDivImg);
-      productDivImg.className = "cart__item__img";
-      console.log(productDivImg);
+  titleCart.innerHTML = "Votre panier est vide !";
+  sectionCart.style.display = "none";
+} else {
+  for (let product of productFromLocalStorage) {
+    // Création et insertion de l'élement article
+    const cartArticle = document.createElement("article");
+    document.querySelector("#cart__items").appendChild(cartArticle);
+    cartArticle.className = "cart__item";
+    cartArticle.setAttribute("data-id", productFromLocalStorage._id);
+    //console.log("cartArticle");
 
-      // Insertion de l'image
-      let productImg = document.createElement("img");
-      productDivImg.appendChild(productImg);
-      productImg.src = productFromLocalStorage.imageUrl;
-      productImg.alt = productFromLocalStorage.altTxt;
-      console.log(productImg);
-    }
-  });
+    //Création et insertion de l'élément "div" pour l'image du produit
+    const cartDivImg = document.createElement("div");
+    cartArticle.appendChild(cartDivImg);
+    cartDivImg.className = "cart__item__img";
+    //console.log("cartDivImg");
+
+    // Création et insertion de l'élément image
+    const cartImg = document.createElement("img");
+    cartDivImg.appendChild(cartImg);
+    cartImg.src = productFromLocalStorage.imageUrl;
+    console.log(cartImg);
+  }
+}

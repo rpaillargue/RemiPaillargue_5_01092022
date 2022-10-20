@@ -61,7 +61,7 @@ buttonAddCart.addEventListener("click", () => {
     } else {
       // Si produit déja dans le local storage
       // On vérifie si la couleur est la même
-      if (elementTrouve.color === colors) {
+      if (elementTrouve.colors === colors) {
         // Modification de la quantité du produit
         elementTrouve.quantity++;
         console.log("ICI IL FAUT MODIFIER LA QUANTITE");
