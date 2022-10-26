@@ -51,29 +51,41 @@ buttonAddCart.addEventListener("click", () => {
     const storageParsed = JSON.parse(storage);
 
     // On vérifie si le produit existe déja dans le local storage (function find en js)
-    const elementTrouve = storageParsed.find((item) => item.id === idProduit);
-    console.log(elementTrouve);
+    const elementsTrouves = storageParsed.filter(
+      (item) => item.id === idProduit
+    );
+    console.log(elementsTrouves);
 
     // Si produit n'existe pas déjà dans le local storage
-    if (elementTrouve === undefined) {
-      storageParsed.push({ id: produitRecupere._id, quantity: 0 });
-      localStorage.setItem("panier", JSON.stringify(storageParsed));
-    } else {
-      // Si produit déja dans le local storage
-      // On vérifie si la couleur est la même
-      if (elementTrouve.colors === colors) {
-        // Modification de la quantité du produit
-        elementTrouve.quantity++;
-        console.log("ICI IL FAUT MODIFIER LA QUANTITE");
-        localStorage.setItem("panier", JSON.stringify(storageParsed));
-      } else {
+    if (elementsTrouves.length !== 0) {
+      const colorTouvee = elementsTrouves.find(
+        (item) => item.color === colors.value
+      );
+
+      if (colorTouvee === undefined) {
+        // AJOUT DE LA NOUVELLE LIGNE AU LOCAL STORAGE
         storageParsed.push({
           id: produitRecupere._id,
           quantity: 1,
           color: colors.value,
         });
         localStorage.setItem("panier", JSON.stringify(storageParsed));
+      } else {
+        // MODIFICATION DE LA QUANTITE DE L ELEMENT DEJA EXISTANT DANS LE LOCAL STORAGE
+        colorTouvee.quantity++;
+        console.log(colorTouvee);
+        localStorage.setItem("panier", JSON.stringify(storageParsed));
+        //console.log("ICI IL FAUT MODIFIER LA QUANTITE");
       }
+    } else {
+      // Premier ajout du produit au panier
+      storageParsed.push({
+        id: produitRecupere._id,
+        quantity: 1,
+        color: colors.value,
+      });
+      localStorage.setItem("panier", JSON.stringify(storageParsed));
+      console.log("PREMIER AJOUT DU PRODUIT AU PANIER");
     }
   }
   // Si existe pas on le créer
@@ -87,7 +99,3 @@ buttonAddCart.addEventListener("click", () => {
     //console.log(`panier not found`);
   }
 });
-
-//buttonAddCart.addEventListener("click", () => {
-//window.location.href = "./cart.html";
-//});
