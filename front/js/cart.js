@@ -2,7 +2,7 @@ let productFromLocalStorage = JSON.parse(localStorage.getItem("panier"));
 console.log(productFromLocalStorage);
 
 if (!productFromLocalStorage) {
-  console.log("négatif");
+  console.log("Aucun prodruit dans le panier !");
   const titleCart = document.querySelector("h1");
   const sectionCart = document.querySelector(".cart");
 
