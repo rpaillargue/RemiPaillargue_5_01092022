@@ -40,6 +40,7 @@ fetch("http://localhost:3000/api/products/" + idProduit)
   });
 
 // Ajout d'un produit au panier
+const buttonQuantity = document.getElementById("quantity");
 const buttonAddCart = document.getElementById("addToCart");
 buttonAddCart.addEventListener("click", () => {
   // Vérification si local storage existe
@@ -66,13 +67,13 @@ buttonAddCart.addEventListener("click", () => {
         // AJOUT DE LA NOUVELLE LIGNE AU LOCAL STORAGE
         storageParsed.push({
           id: produitRecupere._id,
-          quantity: 1,
+          quantity: quantity.value,
           color: colors.value,
         });
         localStorage.setItem("panier", JSON.stringify(storageParsed));
       } else {
         // MODIFICATION DE LA QUANTITE DE L ELEMENT DEJA EXISTANT DANS LE LOCAL STORAGE
-        colorTouvee.quantity++;
+        colorTouvee.quantity = +colorTouvee.quantity + +quantity.value;
         console.log(colorTouvee);
         localStorage.setItem("panier", JSON.stringify(storageParsed));
         //console.log("ICI IL FAUT MODIFIER LA QUANTITE");
@@ -81,7 +82,7 @@ buttonAddCart.addEventListener("click", () => {
       // Premier ajout du produit au panier
       storageParsed.push({
         id: produitRecupere._id,
-        quantity: 1,
+        quantity: quantity.value,
         color: colors.value,
       });
       localStorage.setItem("panier", JSON.stringify(storageParsed));
@@ -93,9 +94,17 @@ buttonAddCart.addEventListener("click", () => {
     localStorage.setItem(
       "panier",
       JSON.stringify([
-        { id: produitRecupere._id, quantity: 1, color: colors.value },
+        {
+          id: produitRecupere._id,
+          quantity: quantity.value,
+          color: colors.value,
+        },
       ])
     );
     //console.log(`panier not found`);
   }
 });
+
+//buttonAddCart.addEventListener("click", () => {
+//window.location.href = "./cart.html";
+//});
