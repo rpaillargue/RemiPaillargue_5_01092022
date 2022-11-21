@@ -28,13 +28,13 @@ if (!productFromLocalStorage) {
     const produit = produits.find(
       (item) => item._id === productFromLocalStorage[i].id
     );
-    console.log(produit);
+    // console.log(produit);
     // Création et insertion de l'élement article
     const cartArticle = document.createElement("article");
     cartArticle.classList.add("cart__item");
     cartArticle.dataset.id = productFromLocalStorage[i].id;
     cartArticle.dataset.color = productFromLocalStorage[i].color;
-    console.log(cartArticle);
+    // console.log(cartArticle);
 
     // Création et insertion de la div image
     const cartDivImg = document.createElement("div");
@@ -134,17 +134,22 @@ if (!productFromLocalStorage) {
     cartDelete.classList.add("deleteItem");
     cartDelete.innerHTML = "Supprimer";
     cartSettingsDelete.appendChild(cartDelete);
-    cartSettingsDelete.addEventListener("click", () => {
+    cartSettingsDelete.addEventListener("click", (event) => {
       console.log("DELETEEEE");
       console.log(productFromLocalStorage);
-      // Quand on clique sur le bouton Supprimer
-      const produitsRestants = productFromLocalStorage.filter(
-        (item) =>
-          item.id !== productFromLocalStorage[i].id ||
-          item.color !== productFromLocalStorage[i].color.value
-      );
+      console.log(produit);
+
+      const elementParent = event.target.closest(".cart__item");
+      const idElement = elementParent.dataset.id;
+      const colorElement = elementParent.dataset.color;
+      // Suppression d'un produit dans le panier
+      const produitsRestants = productFromLocalStorage.filter((item) => {
+        return item.id !== idElement || item.color !== colorElement;
+      });
+
       console.log(produitsRestants);
-      localStorage.setItem("panier", JSON.stringify(productFromLocalStorage));
+
+      localStorage.setItem("panier", JSON.stringify(produitsRestants));
       // Si aucun produit dans le local storage on affiche le panier vide
       if (produitsRestants.length === 0) {
         localStorage.clear();
@@ -154,7 +159,7 @@ if (!productFromLocalStorage) {
     });
     // Ajout au clic de quantité
     const addQuantity = document.getElementsByClassName("itemQuantity");
-    console.log(addQuantity);
+    // console.log(addQuantity);
 
     cardItems.appendChild(cartArticle);
     //console.log(cartDelete);
