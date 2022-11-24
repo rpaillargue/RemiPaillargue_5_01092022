@@ -158,10 +158,51 @@ if (!productFromLocalStorage) {
       location.reload();
     });
     // Ajout au clic de quantité
-    const addQuantity = document.getElementsByClassName("itemQuantity");
-    // console.log(addQuantity);
+    // const addQuantity = document.querySelectorAll(".itemQuantity");
+
+    //addQuantity.addEventListener("change", (event) => {});
+    //console.log(addQuantity);
 
     cardItems.appendChild(cartArticle);
-    //console.log(cartDelete);
   }
+
+  // Total quantité et prix du panier
+  const totalQuantityElementDOM = document.getElementById("totalQuantity");
+  const totalPriceElementDOM = document.getElementById("totalPrice");
+
+  // Calcule du total quantité du panier
+  let totalQuantityValue = 0;
+  for (const item of productFromLocalStorage) {
+    totalQuantityValue = totalQuantityValue + +item.quantity;
+  }
+  totalQuantityElementDOM.textContent = totalQuantityValue;
+
+  // Calcule du total prix du panier
+  let totalPriceValue = 0;
+  for (let i = 0; i < productFromLocalStorage.length; i++) {
+    const produit = produits.find(
+      (item) => item._id === productFromLocalStorage[i].id
+    );
+    totalPriceValue =
+      totalPriceValue + produit.price * productFromLocalStorage[i].quantity;
+  }
+  totalPriceElementDOM.textContent = totalPriceValue;
+
+  // Gestion et validation du formulaire
+  const cartForm = document.querySelector(".cart__order__form");
+
+  cartForm.addEventListener("submit", function (e) {
+    let firstNameForm = document.getElementById("firstname");
+    let firstNameRegex = /^[a-zA-Z-\s]+$/;
+    //console.log(firstNameForm);
+
+    if (firstNameForm.value() == "") {
+      let errorFirstName = document.getElementById("firstNameErrorMsg");
+      errorFirstName.innerHTML = "Le champ prénom est requis";
+      e.preventDefault();
+    } else if (firstNameRegex.test(firstNameForm.value) == false) {
+      let myError = document.getElementById("firstNameErrorMsg");
+      myError.innerHTML = "Le prénom est incorrect";
+    }
+  });
 }
