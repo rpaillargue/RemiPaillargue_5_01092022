@@ -190,19 +190,122 @@ if (!productFromLocalStorage) {
 
   // Gestion et validation du formulaire
   const cartForm = document.querySelector(".cart__order__form");
+  let error = true;
 
   cartForm.addEventListener("submit", function (e) {
-    let firstNameForm = document.getElementById("firstname");
-    let firstNameRegex = /^[a-zA-Z-\s]+$/;
-    //console.log(firstNameForm);
+    e.preventDefault();
 
-    if (firstNameForm.value() == "") {
-      let errorFirstName = document.getElementById("firstNameErrorMsg");
-      errorFirstName.innerHTML = "Le champ prénom est requis";
-      e.preventDefault();
-    } else if (firstNameRegex.test(firstNameForm.value) == false) {
-      let myError = document.getElementById("firstNameErrorMsg");
-      myError.innerHTML = "Le prénom est incorrect";
+    // Création des variables et des regex
+    let firstNameForm = document.getElementById("firstName");
+    let firstNameRegex =
+      /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃ ,.'-]+$/u;
+    let errorFirstName = "Le champ prénom est incorrect";
+    let errorFirstNameElement = document.getElementById("firstNameErrorMsg");
+
+    let lastNameForm = document.getElementById("lastName");
+    let lastNameRegex = /^[a-zA-Z-\s]+$/;
+    let errorLastName = "Le champ nom est incorrect";
+    let errorLastNameElement = document.getElementById("lastNameErrorMsg");
+
+    let addressForm = document.getElementById("address");
+    let addressRegex = /^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+/;
+    let errorAddress = "Le champ adresse est incorrect";
+    let errorAddressElement = document.getElementById("addressErrorMsg");
+
+    let cityForm = document.getElementById("city");
+    let cityRegex = /^[a-zA-Z-\s]+$/;
+    let errorCity = "Le champ ville est incorrect";
+    let errorCityElement = document.getElementById("cityErrorMsg");
+
+    let emailForm = document.getElementById("email");
+    let emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    let errorEmail = "Le champ email est incorrect";
+    let errorEmailElement = document.getElementById("emailErrorMsg");
+
+    // Validation du prénom
+    if (firstNameRegex.test(firstNameForm.value) === false) {
+      errorFirstNameElement.textContent = errorFirstName;
+      error = true;
+    } else {
+      errorFirstNameElement.textContent = "";
+      error = false;
+    }
+
+    // Validation du nom
+    if (lastNameRegex.test(lastNameForm.value) === false) {
+      errorLastNameElement.textContent = errorLastName;
+      error = true;
+    } else {
+      errorLastNameElement.textContent = "";
+      error = false;
+    }
+
+    // Validation de l'adresse
+    if (addressRegex.test(addressForm.value) === false) {
+      errorAddressElement.textContent = errorAddress;
+      error = true;
+    } else {
+      errorAddressElement.textContent = "";
+      error = false;
+    }
+
+    // Validation de la ville
+    if (cityRegex.test(cityForm.value) === false) {
+      errorCityElement.textContent = errorCity;
+      error = true;
+    } else {
+      errorCityElement.textContent = "";
+      error = false;
+    }
+
+    // Validation de l'adresse mail
+    if (emailRegex.test(emailForm.value) === false) {
+      errorEmailElement.textContent = errorEmail;
+      error = true;
+    } else {
+      errorEmailElement.textContent = "";
+      error = false;
+    }
+
+    // Appel API lors de la validation
+    if (!error) {
+      console.log("CALL API");
+
+      // Création objet contact
+      const contactForm = {
+        firstName: document.getElementById("firstName").value,
+        lastName: document.getElementById("lastName").value,
+        address: document.getElementById("address").value,
+        city: document.getElementById("city").value,
+        email: document.getElementById("email").value,
+      };
+      console.log(contactForm);
+
+      // Création du tableau des produits
+      let productForm = [];
+      for (let i = 0; i < productFromLocalStorage.length; i++) {
+        produit.push(productFromLocalStorage[i].id);
+      }
+      console.log(productForm);
+
+      // Création de l'objet formulaire avec toutes les données
+      const dataForm = {
+        contactForm,
+        productForm,
+      };
+      console.log(dataForm)
+      // Envoi des données au serveur
+      let response = await fetch("http://localhost:3000/api/products/order", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataForm)
+      });
+      
+      let result = await response.json();
+      alert(result.message);
     }
   });
 }
