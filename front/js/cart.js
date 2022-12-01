@@ -8,6 +8,26 @@ async function getProducts() {
     });
 }
 
+async function sendForm(dataForm) {
+  return fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dataForm),
+  })
+    .then(function (res) {
+      return res.json();
+    })
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
 const produits = await getProducts();
 console.log(produits);
 
@@ -192,7 +212,7 @@ if (!productFromLocalStorage) {
   const cartForm = document.querySelector(".cart__order__form");
   let error = true;
 
-  cartForm.addEventListener("submit", function (e) {
+  cartForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     // Création des variables et des regex
@@ -270,42 +290,29 @@ if (!productFromLocalStorage) {
     // Appel API lors de la validation
     if (!error) {
       console.log("CALL API");
-
       // Création objet contact
-      const contactForm = {
+      const contact = {
         firstName: document.getElementById("firstName").value,
         lastName: document.getElementById("lastName").value,
         address: document.getElementById("address").value,
         city: document.getElementById("city").value,
         email: document.getElementById("email").value,
       };
-      console.log(contactForm);
 
       // Création du tableau des produits
-      let productForm = [];
+      let products = [];
       for (let i = 0; i < productFromLocalStorage.length; i++) {
-        produit.push(productFromLocalStorage[i].id);
+        products.push(productFromLocalStorage[i].id);
       }
-      console.log(productForm);
 
       // Création de l'objet formulaire avec toutes les données
       const dataForm = {
-        contactForm,
-        productForm,
+        contact,
+        products,
       };
-      console.log(dataForm)
-      // Envoi des données au serveur
-      let response = await fetch("http://localhost:3000/api/products/order", {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dataForm)
-      });
-      
-      let result = await response.json();
-      alert(result.message);
+
+      const result = await sendForm(dataForm);
+      console.log(result);
     }
   });
 }
