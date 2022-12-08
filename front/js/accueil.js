@@ -1,8 +1,10 @@
+// Appel API pour récupérer les produits à afficher sur la page d'accueil
 fetch("http://localhost:3000/api/products")
   .then(function (res) {
     return res.json();
   })
   .then(function (product) {
+    // Création des articles produits
     for (let i = 0; i < product.length; i++) {
       console.log(product[i]);
       // Insertion de l'élément "a"

@@ -1,3 +1,4 @@
+// Appel API pour afficher les produits dans le panier
 async function getProducts() {
   return fetch("http://localhost:3000/api/products")
     .then(function (res) {
@@ -8,6 +9,7 @@ async function getProducts() {
     });
 }
 
+// Appel API pour le formulaire
 async function sendForm(dataForm) {
   return fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -20,12 +22,12 @@ async function sendForm(dataForm) {
     .then(function (res) {
       return res.json();
     })
-    .then((response) => {
-      return response;
-    })
-    .catch((error) => {
-      console.log(error);
+    .then((data) => {
+      document.location.href = `confirmation.html?orderId=${data.orderId}`;
     });
+  //.catch((error) => {
+  //console.log(error);
+  //});
 }
 
 const produits = await getProducts();
@@ -49,6 +51,7 @@ if (!productFromLocalStorage) {
       (item) => item._id === productFromLocalStorage[i].id
     );
     // console.log(produit);
+
     // Création et insertion de l'élement article
     const cartArticle = document.createElement("article");
     cartArticle.classList.add("cart__item");
@@ -177,14 +180,16 @@ if (!productFromLocalStorage) {
       // Et on raffraichit la page
       location.reload();
     });
-    // Ajout au clic de quantité
-    // const addQuantity = document.querySelectorAll(".itemQuantity");
-
-    //addQuantity.addEventListener("change", (event) => {});
-    //console.log(addQuantity);
-
     cardItems.appendChild(cartArticle);
   }
+
+  //Ajout au clic de quantité
+  const addQuantity = document.querySelector(".itemQuantity");
+  //console.log(addQuantity);
+  addQuantity.addEventListener("change", (event) => {
+    console.log("test");
+    const changeQuantity = productFromLocalStorage.quantity;
+  });
 
   // Total quantité et prix du panier
   const totalQuantityElementDOM = document.getElementById("totalQuantity");

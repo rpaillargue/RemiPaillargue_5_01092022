@@ -2,8 +2,6 @@
 let idProduit = new URL(window.location.href).searchParams.get("id");
 let produitRecupere;
 
-// Récupération input
-
 // Récupération de l'id et affichage du produit et de ses détails dans la page Produit
 fetch("http://localhost:3000/api/products/" + idProduit)
   .then(function (res) {
@@ -104,7 +102,3 @@ buttonAddCart.addEventListener("click", () => {
     //console.log(`panier not found`);
   }
 });
-
-//buttonAddCart.addEventListener("click", () => {
-//window.location.href = "./cart.html";
-//});
