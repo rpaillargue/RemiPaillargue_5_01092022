@@ -2,7 +2,7 @@
 let idProduit = new URL(window.location.href).searchParams.get("id");
 let produitRecupere;
 
-// Récupération de l'id et affichage du produit et de ses détails dans la page Produit
+//----------------------Récupération de l'id et affichage du produit et de ses détails dans la page Produit------------------------//
 fetch("http://localhost:3000/api/products/" + idProduit)
   .then(function (res) {
     return res.json();
@@ -37,19 +37,18 @@ fetch("http://localhost:3000/api/products/" + idProduit)
     }
   });
 
-// Ajout d'un produit au panier
+//-----------------------Ajout d'un produit au panier-------------------------//
 const buttonQuantity = document.getElementById("quantity");
 const buttonAddCart = document.getElementById("addToCart");
 buttonAddCart.addEventListener("click", () => {
   // Vérification si local storage existe
-
   // Si existe on le récupère et on ajoute aux éléments déja existants
   if (localStorage.getItem("panier") !== null) {
     console.log(`panier exists`);
     const storage = localStorage.getItem("panier");
     const storageParsed = JSON.parse(storage);
 
-    // On vérifie si le produit existe déja dans le local storage (function find en js)
+    // On vérifie si le produit existe déja dans le local storage
     const elementsTrouves = storageParsed.filter(
       (item) => item.id === idProduit
     );
@@ -74,7 +73,6 @@ buttonAddCart.addEventListener("click", () => {
         colorTouvee.quantity = +colorTouvee.quantity + +quantity.value;
         console.log(colorTouvee);
         localStorage.setItem("panier", JSON.stringify(storageParsed));
-        //console.log("ICI IL FAUT MODIFIER LA QUANTITE");
       }
     } else {
       // Premier ajout du produit au panier
@@ -84,7 +82,7 @@ buttonAddCart.addEventListener("click", () => {
         color: colors.value,
       });
       localStorage.setItem("panier", JSON.stringify(storageParsed));
-      console.log("PREMIER AJOUT DU PRODUIT AU PANIER");
+      alert("Produit ajouté au panier");
     }
   }
   // Si existe pas on le créer
@@ -99,6 +97,5 @@ buttonAddCart.addEventListener("click", () => {
         },
       ])
     );
-    //console.log(`panier not found`);
   }
 });

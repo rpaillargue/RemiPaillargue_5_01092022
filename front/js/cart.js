@@ -9,7 +9,7 @@ async function getProducts() {
     });
 }
 
-// Appel API pour le formulaire
+// Requête POST pour le formulaire
 async function sendForm(dataForm) {
   return fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -25,9 +25,6 @@ async function sendForm(dataForm) {
     .then((data) => {
       document.location.href = `confirmation.html?orderId=${data.orderId}`;
     });
-  //.catch((error) => {
-  //console.log(error);
-  //});
 }
 
 const produits = await getProducts();
@@ -38,6 +35,8 @@ const cardItems = document.getElementById("cart__items");
 let productFromLocalStorage = JSON.parse(localStorage.getItem("panier"));
 console.log(productFromLocalStorage);
 
+//---------------------------Affichage du panier---------------------------/
+//Si le panier est vide, on affiche un message
 if (!productFromLocalStorage) {
   console.log("Aucun prodruit dans le panier !");
   const titleCart = document.querySelector("h1");
@@ -50,7 +49,6 @@ if (!productFromLocalStorage) {
     const produit = produits.find(
       (item) => item._id === productFromLocalStorage[i].id
     );
-    // console.log(produit);
 
     // Création et insertion de l'élement article
     const cartArticle = document.createElement("article");
@@ -158,14 +156,11 @@ if (!productFromLocalStorage) {
     cartDelete.innerHTML = "Supprimer";
     cartSettingsDelete.appendChild(cartDelete);
     cartSettingsDelete.addEventListener("click", (event) => {
-      console.log("DELETEEEE");
-      console.log(productFromLocalStorage);
-      console.log(produit);
-
       const elementParent = event.target.closest(".cart__item");
       const idElement = elementParent.dataset.id;
       const colorElement = elementParent.dataset.color;
-      // Suppression d'un produit dans le panier
+
+      //---------------------------Suppression d'un produit dans le panier-----------------------------//
       const produitsRestants = productFromLocalStorage.filter((item) => {
         return item.id !== idElement || item.color !== colorElement;
       });
@@ -183,15 +178,31 @@ if (!productFromLocalStorage) {
     cardItems.appendChild(cartArticle);
   }
 
-  //Ajout au clic de quantité
-  const addQuantity = document.querySelector(".itemQuantity");
-  //console.log(addQuantity);
-  addQuantity.addEventListener("change", (event) => {
-    console.log("test");
-    const changeQuantity = productFromLocalStorage.quantity;
+  //-------------------Changement de la quantité depuis le panier par l'utilisateur-------------------------//
+  document.querySelectorAll(".itemQuantity").forEach((item) => {
+    item.addEventListener("change", (event) => {
+      const elementParent = event.target.closest(".cart__item");
+      const idElement = elementParent.dataset.id;
+      const colorElement = elementParent.dataset.color;
+
+      let produitTrouve = productFromLocalStorage.filter((item) => {
+        return item.id === idElement && item.color === colorElement;
+      });
+      produitTrouve[0].quantity = event.target.value;
+
+      const autresProduits = productFromLocalStorage.filter((item) => {
+        return item.id !== idElement || item.color !== colorElement;
+      });
+
+      const nouveauStorage = [...produitTrouve, ...autresProduits];
+
+      localStorage.setItem("panier", JSON.stringify(nouveauStorage));
+
+      location.reload();
+    });
   });
 
-  // Total quantité et prix du panier
+  //----------------------Total quantité et prix du panier---------------------------//
   const totalQuantityElementDOM = document.getElementById("totalQuantity");
   const totalPriceElementDOM = document.getElementById("totalPrice");
 
@@ -213,84 +224,65 @@ if (!productFromLocalStorage) {
   }
   totalPriceElementDOM.textContent = totalPriceValue;
 
-  // Gestion et validation du formulaire
+  //------------------------Gestion et validation du formulaire------------------------------
   const cartForm = document.querySelector(".cart__order__form");
-  let error = true;
 
+  // Tableau des éléments du formulaire
+  const fields = [
+    {
+      element: document.getElementById("firstName"),
+      regex:
+        /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃ ,.'-]+$/u,
+      errorMessage: "Le champ prénom est incorrect",
+      elementError: document.getElementById("firstNameErrorMsg"),
+      error: false,
+    },
+    {
+      element: document.getElementById("lastName"),
+      regex: /^[a-zA-Z-\s]+$/,
+      errorMessage: "Le champ nom est incorrect",
+      elementError: document.getElementById("lastNameErrorMsg"),
+      error: false,
+    },
+    {
+      element: document.getElementById("address"),
+      regex: /^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+/,
+      errorMessage: "Le champ adresse est incorrect",
+      elementError: document.getElementById("addressErrorMsg"),
+      error: false,
+    },
+    {
+      element: document.getElementById("city"),
+      regex: /^[a-zA-Z-\s]+$/,
+      errorMessage: "Le champ ville est incorrect",
+      elementError: document.getElementById("cityErrorMsg"),
+      error: false,
+    },
+    {
+      element: document.getElementById("email"),
+      regex: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+      errorMessage: "Le champ email est incorrect",
+      elementError: document.getElementById("emailErrorMsg"),
+      error: false,
+    },
+  ];
+
+  // Validation du formulaire
   cartForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    // Création des variables et des regex
-    let firstNameForm = document.getElementById("firstName");
-    let firstNameRegex =
-      /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃ ,.'-]+$/u;
-    let errorFirstName = "Le champ prénom est incorrect";
-    let errorFirstNameElement = document.getElementById("firstNameErrorMsg");
-
-    let lastNameForm = document.getElementById("lastName");
-    let lastNameRegex = /^[a-zA-Z-\s]+$/;
-    let errorLastName = "Le champ nom est incorrect";
-    let errorLastNameElement = document.getElementById("lastNameErrorMsg");
-
-    let addressForm = document.getElementById("address");
-    let addressRegex = /^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+/;
-    let errorAddress = "Le champ adresse est incorrect";
-    let errorAddressElement = document.getElementById("addressErrorMsg");
-
-    let cityForm = document.getElementById("city");
-    let cityRegex = /^[a-zA-Z-\s]+$/;
-    let errorCity = "Le champ ville est incorrect";
-    let errorCityElement = document.getElementById("cityErrorMsg");
-
-    let emailForm = document.getElementById("email");
-    let emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    let errorEmail = "Le champ email est incorrect";
-    let errorEmailElement = document.getElementById("emailErrorMsg");
-
-    // Validation du prénom
-    if (firstNameRegex.test(firstNameForm.value) === false) {
-      errorFirstNameElement.textContent = errorFirstName;
-      error = true;
-    } else {
-      errorFirstNameElement.textContent = "";
-      error = false;
+    for (const field of fields) {
+      if (field.regex.test(field.element.value) === false) {
+        field.elementError.textContent = field.errorMessage;
+        field.error = true;
+      } else {
+        field.elementError.textContent = "";
+        field.error = false;
+      }
     }
 
-    // Validation du nom
-    if (lastNameRegex.test(lastNameForm.value) === false) {
-      errorLastNameElement.textContent = errorLastName;
-      error = true;
-    } else {
-      errorLastNameElement.textContent = "";
-      error = false;
-    }
-
-    // Validation de l'adresse
-    if (addressRegex.test(addressForm.value) === false) {
-      errorAddressElement.textContent = errorAddress;
-      error = true;
-    } else {
-      errorAddressElement.textContent = "";
-      error = false;
-    }
-
-    // Validation de la ville
-    if (cityRegex.test(cityForm.value) === false) {
-      errorCityElement.textContent = errorCity;
-      error = true;
-    } else {
-      errorCityElement.textContent = "";
-      error = false;
-    }
-
-    // Validation de l'adresse mail
-    if (emailRegex.test(emailForm.value) === false) {
-      errorEmailElement.textContent = errorEmail;
-      error = true;
-    } else {
-      errorEmailElement.textContent = "";
-      error = false;
-    }
+    const error = fields.find((field) => field.error);
+    console.log(error);
 
     // Appel API lors de la validation
     if (!error) {
