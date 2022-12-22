@@ -224,7 +224,7 @@ if (!productFromLocalStorage) {
   }
   totalPriceElementDOM.textContent = totalPriceValue;
 
-  //------------------------Gestion et validation du formulaire------------------------------
+  //------------------------Gestion et validation du formulaire------------------------------//
   const cartForm = document.querySelector(".cart__order__form");
 
   // Tableau des éléments du formulaire
